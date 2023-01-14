@@ -1,25 +1,26 @@
-import subprocess
 import sys
+import subprocess
 from datetime import datetime, timedelta
 
 def git_status(git_dir):
     
     # Get the active branch
-    branch = subprocess.check_output(['git', '-C', git_dir, 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode('utf-8')
-    print("active branch:", branch)
+    active_branch = subprocess.check_output(['git', '-C', git_dir, 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode('utf-8')
+    print("active branch:", active_branch)
 
     # Check for local changes
-    changes = subprocess.run(['git', '-C', git_dir, 'diff-index', 'HEAD'], capture_output=True, text=True)
-    if changes.stdout:
+    local_changes = subprocess.run(['git', '-C', git_dir, 'diff-index', 'HEAD'], capture_output=True, text=True)
+    if local_changes.stdout:
         print("local changes: True")
     else:
         print("local changes: False")
 
     # Check the date of the last commit
     date = subprocess.check_output(['git', '-C', git_dir, 'log', '-1', '--format=%ci']).strip().decode('utf-8')
-    date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S %z')
+    last_commit_date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S %z')
+    today_date = datetime.now().date() - timedelta(days=7)
     
-    if date.date() >= datetime.now().date() - timedelta(days=7):
+    if last_commit_date.date() >= today_date:
         print("recent commit: True")
     else:
         print("recent commit: False")
@@ -31,6 +32,6 @@ def git_status(git_dir):
     else:
         print("blame Rufus: False")
 
-# git_dir is the argument that is provided in the command prompt
+# git_dir is the command input
 git_dir = sys.argv[1]
 git_status(git_dir)
