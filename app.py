@@ -20,6 +20,7 @@ def git_status(git_dir):
     last_commit_date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S %z')
     today_date = datetime.now().date() - timedelta(days=7)
     
+    # Check if the last commit was made within the last 7 days
     if last_commit_date.date() >= today_date:
         print("recent commit: True")
     else:
